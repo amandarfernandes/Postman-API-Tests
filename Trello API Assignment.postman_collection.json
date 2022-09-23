@@ -1,0 +1,410 @@
+{
+	"info": {
+		"_postman_id": "2bcfe15d-bff4-44ce-bf8e-fd66740100ae",
+		"name": "Trello API Assignment",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "2154379"
+	},
+	"item": [
+		{
+			"name": "Create a board",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"let boardNumber = parseInt(pm.environment.get(\"boardCount\"));\r",
+							"if (!boardNumber) {\r",
+							"    boardNumber = 0;\r",
+							"}\r",
+							"pm.environment.set(\"boardCount\",++boardNumber);\r",
+							"let boardName = pm.environment.get(\"board\")+\" \"+boardNumber;\r",
+							"pm.environment.set(\"boardName\", boardName);\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status Code is 200\",()=>{\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"const response = pm.response.json()\r",
+							"pm.test(\"Board created with right name\",()=>{\r",
+							"    let boardName = pm.environment.get(\"boardName\");\r",
+							"    pm.expect(response.name).to.eql(boardName);\r",
+							"});\r",
+							"\r",
+							"pm.environment.set(\"idBoard\", response.id);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}/boards/?name={{boardName}}&defaultLists=false&key={{apiKey}}&token={{apiToken}}",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"boards",
+						""
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "{{boardName}}"
+						},
+						{
+							"key": "defaultLists",
+							"value": "false"
+						},
+						{
+							"key": "key",
+							"value": "{{apiKey}}"
+						},
+						{
+							"key": "token",
+							"value": "{{apiToken}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create TODO list",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status is 200\",()=>{\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"const responseData = pm.response.json();\r",
+							"pm.test(\"To Do list was created\",()=>{\r",
+							"    pm.expect(responseData.name).to.eql(pm.environment.get('toDoName'));\r",
+							"    pm.environment.set(\"idToDo\",responseData.id)\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}/lists?name={{toDoName}}&idBoard={{idBoard}}&key={{apiKey}}&token={{apiToken}}",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"lists"
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "{{toDoName}}"
+						},
+						{
+							"key": "idBoard",
+							"value": "{{idBoard}}"
+						},
+						{
+							"key": "key",
+							"value": "{{apiKey}}"
+						},
+						{
+							"key": "token",
+							"value": "{{apiToken}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create DONE list",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status is 200\",()=>{\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"const responseData = pm.response.json();\r",
+							"pm.test(\"Done list was created\",()=>{\r",
+							"    pm.expect(responseData.name).to.eql(pm.environment.get('doneName'));\r",
+							"    pm.environment.set(\"idDone\",responseData.id)\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}/lists?name={{doneName}}&idBoard={{idBoard}}&key={{apiKey}}&token={{apiToken}}",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"lists"
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "{{doneName}}"
+						},
+						{
+							"key": "idBoard",
+							"value": "{{idBoard}}"
+						},
+						{
+							"key": "key",
+							"value": "{{apiKey}}"
+						},
+						{
+							"key": "token",
+							"value": "{{apiToken}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Card One",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status to be 200\",()=>{",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"jsonResponse = pm.response.json();",
+							"",
+							"pm.test(\"Card 'Sign up for Trello' was created on TODO list\",()=>{",
+							"    pm.expect(jsonResponse.name).to.eql(pm.environment.get(\"cardOneName\"));",
+							"",
+							"});",
+							"",
+							"pm.environment.set(\"idCardOne\",jsonResponse.id);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}/cards?name={{cardOneName}}&idList={{idToDo}}&key={{apiKey}}&token={{apiToken}}",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"cards"
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "{{cardOneName}}"
+						},
+						{
+							"key": "idList",
+							"value": "{{idToDo}}"
+						},
+						{
+							"key": "key",
+							"value": "{{apiKey}}"
+						},
+						{
+							"key": "token",
+							"value": "{{apiToken}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Move Card One",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status is 200\",()=>{",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"jsonResponse = pm.response.json();",
+							"pm.test(\"Card moved from TODO to DONE\",()=>{",
+							"    pm.expect(jsonResponse.idList).to.eql(pm.environment.get(\"idDone\"));",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/cards/:id?idList={{idDone}}&key={{apiKey}}&token={{apiToken}}",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"cards",
+						":id"
+					],
+					"query": [
+						{
+							"key": "idList",
+							"value": "{{idDone}}"
+						},
+						{
+							"key": "key",
+							"value": "{{apiKey}}"
+						},
+						{
+							"key": "token",
+							"value": "{{apiToken}}"
+						}
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "{{idCardOne}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete a board",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}/boards/:boardid?key={{apiKey}}&token={{apiToken}}",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"boards",
+						":boardid"
+					],
+					"query": [
+						{
+							"key": "key",
+							"value": "{{apiKey}}"
+						},
+						{
+							"key": "token",
+							"value": "{{apiToken}}"
+						}
+					],
+					"variable": [
+						{
+							"key": "boardid",
+							"value": "{{idBoard}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get a board",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}/boards/?key={{apiKey}}&token={{apiToken}}",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"boards",
+						""
+					],
+					"query": [
+						{
+							"key": "key",
+							"value": "{{apiKey}}"
+						},
+						{
+							"key": "token",
+							"value": "{{apiToken}}"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"",
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "apiKey",
+			"value": "bb4ca5460ddfc5870350b728cf86fe00",
+			"type": "string"
+		},
+		{
+			"key": "apiToken",
+			"value": "329fe892d9730daff3d43f9c5c9cf7d9caf006984be8abfbc9cdc25e88a55aba",
+			"type": "string"
+		}
+	]
+}
